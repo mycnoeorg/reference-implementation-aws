@@ -137,7 +137,7 @@ keycloak:
   namespace: keycloak
   releaseName: keycloak
   defaultVersion: "24.7.3"
-  chartRepository: "oci://registry-1.docker.io/bitnamicharts"
+  chartRepository: "https://repo.broadcom.com/bitnami-files"
   valuesObject:
     httpRelativePath: '/{{ if eq .metadata.labels.path_routing "true" }}keycloak/{{ end }}'
     ingress:
