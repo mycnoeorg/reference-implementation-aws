@@ -3,6 +3,10 @@ production: true
 usePasswordFiles: false
 proxyHeaders: "forwarded"
 
+image:
+  registry: docker.io
+  repository: bitnamilegacy/keycloak
+
 global:
   defaultStorageClass: gp3
 
@@ -23,6 +27,9 @@ ingress:
 
 postgresql:
   enabled: true
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
   auth:
     username: keycloak
     database: keycloak
