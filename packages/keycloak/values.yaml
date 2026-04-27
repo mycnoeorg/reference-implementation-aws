@@ -9,6 +9,8 @@ image:
 
 global:
   defaultStorageClass: gp3
+  security:
+    allowInsecureImages: true
 
 auth:
   adminUser: cnoe-admin
