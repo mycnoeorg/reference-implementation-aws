@@ -26,12 +26,11 @@ spec:
           name: ${{parameters.name}}
 
     - id: publish
-      name: Publishing to a gitea git repository
-      action: publish:gitea
+      name: Publishing to a GitHub repository
+      action: publish:github
       input:
         description: This is an example app
-        # Hard coded value for this demo purposes only.
-        repoUrl: cnoe.localtest.me:8443/gitea?repo=${{parameters.name}}
+        repoUrl: github.com?owner=mycnoeorg&repo=${{parameters.name}}
         defaultBranch: main
     - id: create-argocd-app
       name: Create ArgoCD App
@@ -41,8 +40,7 @@ spec:
         appNamespace: ${{parameters.name}}
         argoInstance: in-cluster
         projectName: default
-        # necessary until we generate our own cert
-        repoUrl: https://cnoe.localtest.me:8443/gitea/giteaAdmin/${{parameters.name}}
+        repoUrl: https://github.com/mycnoeorg/${{parameters.name}}
         path: "manifests"
     - id: register
       name: Register
