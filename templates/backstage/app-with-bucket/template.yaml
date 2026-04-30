@@ -135,8 +135,7 @@ spec:
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: ${{ steps['init-repo'].output.repoContentsUrl }}
-        catalogInfoPath: '/catalog-info.yaml'
+        catalogInfoUrl: ${{ steps['create-repo'].output.remoteUrl | replace(".git", "") }}/blob/main/catalog-info.yaml
   output:
     links:
       - title: Open in catalog
