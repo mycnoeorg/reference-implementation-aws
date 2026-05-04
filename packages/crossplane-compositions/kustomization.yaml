@@ -1,6 +1,7 @@
 namespace: crossplane-system
 resources:
   - s3
+  - multicloud-pipeline
 
 commonAnnotations:
   argocd.argoproj.io/compare-options: ServerSideDiff=true

@@ -1,0 +1,83 @@
+# XRD: Multi-cloud data pipeline abstraction
+# Combines AWS DynamoDB (via provider-terraform) + GCP Pub/Sub (via provider-terraform)
+# Demonstrates §6 of the CGU annex: heterogeneous composition
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xmulticloudpipelines.awsblueprints.io
+spec:
+  claimNames:
+    kind: MultiCloudPipeline
+    plural: multicloudpipelines
+  group: awsblueprints.io
+  names:
+    kind: XMultiCloudPipeline
+    plural: xmulticloudpipelines
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          properties:
+            spec:
+              description: Defines a multi-cloud data pipeline with AWS DynamoDB + GCP Pub/Sub
+              properties:
+                parameters:
+                  type: object
+                  properties:
+                    prefix:
+                      description: Naming prefix for all resources
+                      type: string
+                      default: "cgu"
+                    environment:
+                      description: Environment tag (demo, dev, staging, prod)
+                      type: string
+                      default: "demo"
+                    aws:
+                      type: object
+                      properties:
+                        region:
+                          type: string
+                          default: "us-west-1"
+                      required:
+                        - region
+                    gcp:
+                      type: object
+                      properties:
+                        projectId:
+                          type: string
+                        region:
+                          type: string
+                          default: "us-central1"
+                      required:
+                        - projectId
+                        - region
+                  required:
+                    - prefix
+                    - aws
+                    - gcp
+              required:
+                - parameters
+              type: object
+            status:
+              description: Observed state of the multi-cloud pipeline
+              properties:
+                dynamodb:
+                  type: object
+                  properties:
+                    tableName:
+                      type: string
+                    tableArn:
+                      type: string
+                  x-kubernetes-preserve-unknown-fields: true
+                pubsub:
+                  type: object
+                  properties:
+                    topicName:
+                      type: string
+                    subscriptionName:
+                      type: string
+                  x-kubernetes-preserve-unknown-fields: true
+              type: object
+          type: object
