@@ -1,0 +1,56 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: webapp.cgu.gov.br
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: WebApp
+    spec:
+      name: string | required=true
+      image: string | required=true default="nginx:1.27"
+      replicas: integer | default=1 minimum=1 maximum=5
+    status:
+      availableReplicas: ${deployment.status.availableReplicas}
+      clusterIP: ${service.spec.clusterIP}
+
+  resources:
+    - id: deployment
+      template:
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: ${schema.spec.name}
+          labels:
+            app: ${schema.spec.name}
+            managed-by: kro
+        spec:
+          replicas: ${schema.spec.replicas}
+          selector:
+            matchLabels:
+              app: ${schema.spec.name}
+          template:
+            metadata:
+              labels:
+                app: ${schema.spec.name}
+            spec:
+              containers:
+                - name: app
+                  image: ${schema.spec.image}
+                  ports:
+                    - containerPort: 80
+
+    - id: service
+      template:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: ${schema.spec.name}
+          labels:
+            managed-by: kro
+        spec:
+          selector:
+            app: ${schema.spec.name}
+          ports:
+            - port: 80
+              targetPort: 80

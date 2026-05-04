@@ -1,0 +1,18 @@
+apiVersion: s3.aws.upbound.io/v1beta2
+kind: Bucket
+metadata:
+  name: cgu-legacy-adopted
+  annotations:
+    # Substituir BUCKET_NAME_PLACEHOLDER pelo nome real do bucket a adotar
+    # antes de aplicar:
+    #   sed -e "s/BUCKET_NAME_PLACEHOLDER/meu-bucket/" 06-observe-only.template.yaml | kubectl apply -f -
+    crossplane.io/external-name: BUCKET_NAME_PLACEHOLDER
+spec:
+  # Anexo §7.1: recurso legado que queremos monitorar sem tocar.
+  # Crossplane nunca cria, altera ou deleta — só observa e reporta desvio.
+  # Deletar este MR NÃO deleta o bucket AWS real.
+  managementPolicies: ["Observe"]
+  forProvider:
+    region: us-west-1
+  providerConfigRef:
+    name: default

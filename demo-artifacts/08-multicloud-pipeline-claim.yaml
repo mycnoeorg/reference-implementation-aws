@@ -1,0 +1,17 @@
+# Claim: Multi-cloud data pipeline
+# 1 Claim → 2 Terraform Workspaces (AWS DynamoDB + GCP Pub/Sub)
+# Demonstrates §6 of the CGU annex: heterogeneous composition
+apiVersion: awsblueprints.io/v1alpha1
+kind: MultiCloudPipeline
+metadata:
+  name: cgu-demo-pipeline
+  namespace: default
+spec:
+  parameters:
+    prefix: "cgu-demo"
+    environment: "demo"
+    aws:
+      region: "us-west-1"
+    gcp:
+      projectId: "cksexam-482820"
+      region: "us-central1"

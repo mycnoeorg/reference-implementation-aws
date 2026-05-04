@@ -1,0 +1,100 @@
+apiVersion: tf.upbound.io/v1beta1
+kind: Workspace
+metadata:
+  name: cgu-tf-gcp-pubsub
+  annotations:
+    crossplane.io/external-name: cgu-gcp-pubsub-module
+spec:
+  forProvider:
+    source: Inline
+    # Módulo Terraform que provisiona um Pub/Sub topic + subscription no GCP.
+    # Demonstra composição heterogênea (§6 do anexo):
+    # AWS (DynamoDB via 05-tf-workspace.yaml) + GCP (Pub/Sub aqui)
+    # ambos gerenciados como recursos Kubernetes reconciliáveis.
+    module: |
+      terraform {
+        required_providers {
+          google = { source = "hashicorp/google", version = "~> 6.0" }
+        }
+      }
+
+      provider "google" {
+        project     = var.project_id
+        region      = var.region
+        credentials = file("gcp-credentials.json")
+      }
+
+      variable "project_id" {
+        type    = string
+        default = "cksexam-482820"
+      }
+
+      variable "region" {
+        type    = string
+        default = "us-central1"
+      }
+
+      variable "prefix" {
+        type    = string
+        default = "cgu"
+      }
+
+      variable "environment" {
+        type    = string
+        default = "demo"
+      }
+
+      resource "google_pubsub_topic" "events" {
+        name = "${var.prefix}-events-topic"
+
+        labels = {
+          environment = var.environment
+          managed-by  = "crossplane-provider-terraform"
+          compliance  = "cgu-anexo"
+        }
+
+        message_retention_duration = "86400s"
+      }
+
+      resource "google_pubsub_subscription" "events_sub" {
+        name  = "${var.prefix}-events-subscription"
+        topic = google_pubsub_topic.events.id
+
+        ack_deadline_seconds       = 20
+        message_retention_duration = "604800s"
+
+        labels = {
+          environment = var.environment
+          managed-by  = "crossplane-provider-terraform"
+        }
+      }
+
+      output "topic_name" {
+        value = google_pubsub_topic.events.name
+      }
+
+      output "topic_id" {
+        value = google_pubsub_topic.events.id
+      }
+
+      output "subscription_name" {
+        value = google_pubsub_subscription.events_sub.name
+      }
+
+      output "subscription_id" {
+        value = google_pubsub_subscription.events_sub.id
+      }
+    vars:
+      - key: prefix
+        value: "cgu-anexo"
+      - key: project_id
+        value: "cksexam-482820"
+      - key: region
+        value: "us-central1"
+      - key: environment
+        value: "demo"
+  writeConnectionSecretToRef:
+    namespace: default
+    name: cgu-tf-gcp-pubsub-outputs
+  providerConfigRef:
+    name: gcp

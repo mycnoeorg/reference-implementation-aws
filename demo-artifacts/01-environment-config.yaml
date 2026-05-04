@@ -1,0 +1,13 @@
+apiVersion: apiextensions.crossplane.io/v1beta1
+kind: EnvironmentConfig
+metadata:
+  name: cgu-platform-defaults
+data:
+  region: us-west-1
+  tags:
+    owner: cgu-plataforma
+    env: demo
+    compliance: cgu-anexo
+  cidrs:
+    hub: "10.0.0.0/16"
+    spoke: "10.1.0.0/16"

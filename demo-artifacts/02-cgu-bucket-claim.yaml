@@ -1,0 +1,13 @@
+apiVersion: awsblueprints.io/v1alpha1
+kind: ObjectStorage
+metadata:
+  name: cgu-demo-bucket
+  namespace: default
+spec:
+  resourceConfig:
+    providerConfigName: default
+    region: us-west-1
+    tags:
+      owner: cgu-demo
+      env: demo
+      managed-by: crossplane
