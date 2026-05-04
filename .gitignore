@@ -45,7 +45,14 @@ local_tf_state/
 .gitallowed
 site
 .env*
+!.env.example
 
 # Checks
 .tfsec
+
+# Personal/temporary files (not for version control)
+feedback.txt
+narrativa.txt
+LATAM*.txt
+.playwright-mcp/
 
